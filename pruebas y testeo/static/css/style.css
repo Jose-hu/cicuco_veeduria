@@ -1,0 +1,105 @@
+/* Estilos personalizados para Veeduría Ciudadana Cicuco Transparente */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+    --primary-blue: #0f172a;
+    --navy-dark: #090d16;
+    --accent-amber: #d97706;
+    --gold-light: #fbbf24;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background-color: #f8fafc;
+}
+
+h1, h2, h3, .font-serif-title {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+/* Transiciones suaves entre catálogos */
+.catalog-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.catalog-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos de botones de catálogo activos e inactivos */
+.catalog-tab.active {
+    background-color: #1e3a8a !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.catalog-tab:not(.active) {
+    background-color: #ffffff !important;
+    color: #334155 !important;
+    box-shadow: none !important;
+}
+
+.catalog-tab:not(.active):hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+/* Barras de progreso con brillo */
+.progress-bar-shine {
+    position: relative;
+    overflow: hidden;
+}
+.progress-bar-shine::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 2.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Tarjeta de sello institucional */
+.seal-badge {
+    background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

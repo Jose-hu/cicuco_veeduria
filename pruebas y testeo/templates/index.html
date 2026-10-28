@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veeduría Ciudadana Cicuco Transparente | Portal Oficial de Vigilancia Ciudadana</title>
+    <meta name="description" content="Plataforma de fiscalización, transparencia y control social sobre la contratación pública en el Municipio de Cicuco, Bolívar. Amparada en la Ley 850 de 2003.">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    
+    <!-- Tailwind CSS (v3 CDN para renderizado ultrarrápido sin dependencias npm) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                            950: '#090d16'
+                        },
+                        amber: {
+                            450: '#f59e0b',
+                            550: '#d97706'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body data-official-email="{{ contact_email }}" class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- BARRA SUPERIOR INSTITUCIONAL -->
+    <header class="bg-slate-900 text-white text-xs border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex justify-end items-center gap-2">
+            
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button type="button" id="btn-open-lookup-modal" class="flex items-center gap-1 text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded transition-colors text-[11px] font-medium border border-slate-700 cursor-pointer">
+                    <i data-lucide="search" class="w-3 h-3 text-amber-400"></i>
+                    <span>Consultar Radicado</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- BANNER DE IDENTIDAD INSTITUCIONAL -->
+    <div class="bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 text-white border-b border-blue-900/40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4 text-center md:text-left">
+                <img src="/static/images/logo.png" alt="Escudo Veeduría Ciudadana Cicuco Transparente" class="h-16 w-16 sm:h-20 sm:w-20 object-contain rounded-full bg-white/5 p-1 border border-amber-400/30 shadow-md">
+                <div>
+                    <div class="flex items-center justify-center md:justify-start gap-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-amber-400 text-slate-950">
+                            Control Social Oficial
+                        </span>
+                        <span class="text-xs text-slate-400">Cicuco, Bolívar - Colombia</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white mt-1">
+                        Veeduría Ciudadana Cicuco Transparente
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-300 italic font-serif">
+                        «Fiscalización, Transparencia, Vigilancia de Recursos y Justicia Social»
+                    </p>
+                </div>
+            </div>
+
+            <!-- Botones de Acción Rápida en Cabecera -->
+            <div class="flex items-center gap-2.5">
+                <button data-switch-catalog="catalogo-denuncias" class="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs sm:text-sm font-bold shadow-md hover:shadow-amber-500/20 transition-all flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                    <span>Radicar Denuncia / Reporte</span>
+                </button>
+                
+                {% if is_admin %}
+                <a href="/admin" class="px-3.5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md flex items-center gap-1.5 border border-emerald-400/40" title="Panel de Administración">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Panel Admin Activo</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- BARRA PRINCIPAL DE NAVEGACIÓN ENTRE CATÁLOGOS -->
+    <nav class="bg-white sticky top-0 z-30 border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-1 sm:gap-2 py-2">
+                
+                <!-- Pestaña 1: Inicio y Presentación -->
+                <button class="catalog-tab active bg-blue-900 text-white shadow-md flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-center" data-target="catalogo-inicio">
+                    <i data-lucide="landmark" class="w-4 h-4"></i>
+                    <span>1. Inicio & Presentación</span>
+                </button>
+
+                <!-- Pestaña 2: Contratos Fiscalizados -->
+                <button class="catalog-tab bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-center" data-target="catalogo-contratos">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                    <span>2. Contratos Públicos</span>
+                </button>
+
+                <!-- Pestaña 3: Blindaje Legal contra Demandas -->
+                <button class="catalog-tab bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-center" data-target="catalogo-blindaje">
+                    <i data-lucide="scale" class="w-4 h-4"></i>
+                    <span>3. Blindaje Legal</span>
+                </button>
+
+                <!-- Pestaña 4: Contacto y Denuncias -->
+                <button class="catalog-tab bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-center" data-target="catalogo-denuncias">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span>4. Contacto & Denuncias</span>
+                </button>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL DE CATÁLOGOS -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+        <!-- ============================================================== -->
+        <!-- CATÁLOGO 1: INICIO, PRESENTACIÓN Y LEY QUE LA CUBRE -->
+        <!-- ============================================================== -->
+        <section id="catalogo-inicio" class="catalog-content active space-y-8">
+            
+            <!-- Hero Banner de Presentación -->
+            <div class="relative rounded-2xl overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white p-6 sm:p-10 border border-slate-800 shadow-xl">
+                <div class="relative z-10 max-w-3xl space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/10 text-amber-300 border border-amber-400/20">
+                        <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                        Vigilancia Soberana del Pueblo
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
+                        Defendiendo el Tesoro Público de Cicuco con <span class="text-amber-400">Rigor Técnico y Amparo de la Ley</span>.
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Somos una organización ciudadana independiente y cívica constituida por habitantes de Cicuco (Bolívar), facultada por la Constitución y la Ley para auditar, vigilar y exigir cuentas claras en cada peso invertido en obras viales, alimentación escolar (PAE), acueducto, salud y programas sociales.
+                    </p>
+                    
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button data-switch-catalog="catalogo-contratos" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                            Explorar Contratos Vigilados
+                        </button>
+                        <button data-switch-catalog="catalogo-blindaje" class="px-5 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs sm:text-sm transition-all flex items-center gap-2">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            Conocer Leyes y Blindaje
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Métricas Rápidas en Cuadrícula -->
+                <div class="relative z-10 mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-slate-800/80 pt-6">
+                    <div class="bg-white/5 backdrop-blur-sm p-3.5 rounded-xl border border-white/10">
+                        <div class="text-2xl font-black text-amber-400 font-mono">{{ stats.total_audited_budget }}</div>
+                        <div class="text-[11px] sm:text-xs text-slate-300 mt-0.5">Presupuesto en Vigilancia</div>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur-sm p-3.5 rounded-xl border border-white/10">
+                        <div class="text-2xl font-black text-white font-mono">{{ stats.total_contracts }} Proyectos</div>
+                        <div class="text-[11px] sm:text-xs text-slate-300 mt-0.5">Contratos Monitoreados</div>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur-sm p-3.5 rounded-xl border border-white/10">
+                        <div class="text-2xl font-black text-amber-300 font-mono">{{ stats.alerts_count }} Preventivas</div>
+                        <div class="text-[11px] sm:text-xs text-slate-300 mt-0.5">Alertas Tempranas Emitidas</div>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur-sm p-3.5 rounded-xl border border-white/10">
+                        <div class="text-2xl font-black text-emerald-400 font-mono">100% Legal</div>
+                        <div class="text-[11px] sm:text-xs text-slate-300 mt-0.5">Blindaje en Ley 850</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APARTADO ESPECIAL: LA LEY QUE CUBRE A LA PÁGINA Y A LA VEEDURÍA -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-600 shrink-0">
+                        <i data-lucide="scale" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs uppercase font-extrabold text-blue-900 tracking-wider">Fundamento Estatutario y Constitucional</span>
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-0.5">
+                            ¿Qué Ley Cubre y Ampara esta Plataforma y la Labor de Veeduría?
+                        </h3>
+                        <p class="text-slate-600 text-sm mt-1">
+                            Esta página web y la fiscalización realizada por el comité ciudadano no son una iniciativa informal ni tolerada por beneplácito de funcionarios: es un <strong class="text-slate-900">deber soberano consagrado de forma perentoria en el ordenamiento jurídico de la República de Colombia</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                    <!-- Tarjeta 1: Ley 850 de 2003 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3">
+                        <div class="flex items-center gap-2 text-blue-900 font-bold text-sm">
+                            <i data-lucide="file-check-2" class="w-5 h-5 text-amber-500"></i>
+                            <span>Ley 850 de 2003</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong>Estatuto Nacional de las Veedurías Ciudadanas:</strong> Otorga a la veeduría personería cívica para inspeccionar contratos, actas, balances y ejecución de fondos públicos sin que ninguna autoridad pueda catalogarlo como injerencia indebida.
+                        </p>
+                        <div class="text-[11px] text-blue-900 font-semibold bg-blue-50 px-2 py-1 rounded inline-block">
+                            Artículos 1, 6, 15 y 16 (Derechos y Deberes)
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 2: Artículos 103 y 270 C.P. -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3">
+                        <div class="flex items-center gap-2 text-blue-900 font-bold text-sm">
+                            <i data-lucide="landmark" class="w-5 h-5 text-amber-500"></i>
+                            <span>Constitución Política (Art. 270)</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong>Mandato Constitucional Supremo:</strong> «La ley organizará las formas y los sistemas de participación ciudadana que permitan vigilar la gestión pública que se cumpla en los diversos niveles administrativos y sus resultados».
+                        </p>
+                        <div class="text-[11px] text-blue-900 font-semibold bg-blue-50 px-2 py-1 rounded inline-block">
+                            Pilar de la Democracia Participativa
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 3: Ley 1712 de 2014 -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3">
+                        <div class="flex items-center gap-2 text-blue-900 font-bold text-sm">
+                            <i data-lucide="eye" class="w-5 h-5 text-amber-500"></i>
+                            <span>Ley 1712 de 2014</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong>Ley de Transparencia y Acceso a la Información:</strong> Todo contrato, desembolso o póliza financiada con dinero público es incondicionalmente público. Ningún alcalde o contratista puede declararlo secreto o confidencial.
+                        </p>
+                        <div class="text-[11px] text-blue-900 font-semibold bg-blue-50 px-2 py-1 rounded inline-block">
+                            Principio de Máxima Publicidad
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner Informativo de Registro Formal -->
+                <div class="p-4 bg-amber-50/70 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check-circle-2" class="w-6 h-6 text-amber-600 shrink-0"></i>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wide">Ficha Técnica de Inscripción Legal</h4>
+                            <p class="text-xs text-slate-600">Registro formal radicado ante la Personería Municipal de Cicuco • Periodo Vigente 2024-2027 • Sin vinculación partidista ni burocrática.</p>
+                        </div>
+                    </div>
+                    <button data-switch-catalog="catalogo-blindaje" class="text-xs font-bold text-blue-900 hover:text-blue-700 bg-white px-3 py-1.5 rounded-lg border border-amber-300 shadow-sm shrink-0 flex items-center gap-1">
+                        <span>Ver Blindaje Completo</span>
+                        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- DIRECTORIO DE COMITÉS DE VEEDURÍA -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-bold text-slate-900">Comités Ciudadanos de Fiscalización</h3>
+                        <p class="text-xs sm:text-sm text-slate-500">Equipos de campo asignados para verificar el cumplimiento contractual en cada sector.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center gap-2 text-blue-900 font-bold text-sm">
+                            <i data-lucide="hard-hat" class="w-4 h-4 text-amber-500"></i>
+                            <span>Comité de Obras e Infraestructura</span>
+                        </div>
+                        <p class="text-xs text-slate-600">Auditoría pericial a pavimentaciones, drenajes pluviales, acueducto, puentes y mantenimiento vial urbano y rural.</p>
+                        <span class="inline-block text-[11px] text-slate-500 font-medium">Revisión de bitácoras y mezcla asfáltica</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center gap-2 text-blue-900 font-bold text-sm">
+                            <i data-lucide="utensils" class="w-4 h-4 text-amber-500"></i>
+                            <span>Comité PAE y Educación</span>
+                        </div>
+                        <p class="text-xs text-slate-600">Control estricto a las raciones alimentarias de los niños, condiciones de inocuidad y cumplimiento de menús escolares en Cicuco.</p>
+                        <span class="inline-block text-[11px] text-slate-500 font-medium">Verificación sorpresa en colegios</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center gap-2 text-blue-900 font-bold text-sm">
+                            <i data-lucide="stethoscope" class="w-4 h-4 text-amber-500"></i>
+                            <span>Comité de Salud y Saneamiento</span>
+                        </div>
+                        <p class="text-xs text-slate-600">Vigilancia a la entrega oportuna de medicamentos, dotación del centro asistencial y calidad del suministro de agua potable.</p>
+                        <span class="inline-block text-[11px] text-slate-500 font-medium">Seguimiento a la ESE Hospital Local</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- CATÁLOGO 2: CONTRATOS PÚBLICOS FISCALIZADOS -->
+        <!-- ============================================================== -->
+        <section id="catalogo-contratos" class="catalog-content space-y-6">
+            
+            <!-- Encabezado de la Sección de Contratos -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-900">Módulo Contractual</span>
+                            <span class="text-xs text-slate-500">Datos Oficiales SECOP I, SECOP II y Verificación en Campo</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">
+                            Catálogo de Contratos y Obras Fiscalizadas en Cicuco
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+                            Monitoreo comparativo del avance de obra frente a los desembolsos girados al contratista.
+                        </p>
+                    </div>
+
+                    {% if is_admin %}
+                    <!-- Botón para el administrador cuando está autenticado -->
+                    <a href="/admin" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs sm:text-sm font-bold shadow-md flex items-center gap-2 shrink-0">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Subir Nuevo Contrato (Admin)</span>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Buscador y Filtros Interactivos -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 pt-2">
+                    <div class="relative sm:col-span-2 lg:col-span-4">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                        <input type="text" id="contract-search-input" placeholder="Buscar por código, contratista u obra..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white transition-all">
+                    </div>
+
+                    <div class="lg:col-span-3">
+                        <select id="contract-sector-filter" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white transition-all">
+                            <option value="Todos">Todos los Sectores</option>
+                            <option value="Infraestructura y Vías">Infraestructura y Vías</option>
+                            <option value="Educación y Nutrición">Educación y Nutrición (PAE)</option>
+                            <option value="Salud Pública">Salud Pública</option>
+                            <option value="Agua y Saneamiento">Agua y Saneamiento</option>
+                            <option value="Alumbrado y Electricidad">Alumbrado y Electricidad</option>
+                            <option value="Seguridad y Convivencia">Seguridad y Convivencia</option>
+                            <option value="Otro Sector">Otro Sector</option>
+                        </select>
+                    </div>
+
+                    <div class="lg:col-span-3">
+                        <select id="contract-status-filter" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white transition-all">
+                            <option value="Todos">Todos los Estados</option>
+                            <option value="En Ejecución">En Ejecución</option>
+                            <option value="Alerta Temprana Emitida">Alerta Temprana Emitida</option>
+                            <option value="Alerta Ciudadana en Fiscalización">Alerta Ciudadana en Fiscalización</option>
+                            <option value="Requerimiento ante Personería">Requerimiento ante Personería</option>
+                            <option value="Vigilancia Normal / En Regla">Vigilancia Normal / En Regla</option>
+                            <option value="Fase de Liquidación y Entrega">Fase de Liquidación y Entrega</option>
+                            <option value="Suspendido Temporalmente">Suspendido Temporalmente</option>
+                        </select>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <button type="button" id="btn-clear-contract-filters" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg border border-slate-300 transition-colors flex items-center justify-center gap-1.5 cursor-pointer" title="Restablecer filtros">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            <span>Limpiar Filtros</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grilla Dinámica de Tarjetas de Contratos -->
+            <div id="contracts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for c in contracts %}
+                <div class="contract-card bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 sm:p-6 flex flex-col justify-between"
+                     data-code="{{ c.code }}"
+                     data-title="{{ c.title }}"
+                     data-contractor="{{ c.contractor }}"
+                     data-summary="{{ c.summary }}"
+                     data-sector="{{ c.sector }}"
+                     data-status="{{ c.status }}">
+                    
+                    <div class="space-y-3.5">
+                        <!-- Cabecera de Tarjeta -->
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-slate-100 text-blue-900 border border-slate-200">
+                                    {{ c.code }}
+                                </span>
+                                <span class="text-xs text-slate-500 ml-2 font-medium">{{ c.sector }}</span>
+                            </div>
+                            
+                            <!-- Badge de Estado -->
+                            {% if c.status_type == 'danger' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                                <i data-lucide="alert-octagon" class="w-3 h-3"></i>
+                                {{ c.status }}
+                            </span>
+                            {% elif c.status_type == 'warning' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                <i data-lucide="alert-triangle" class="w-3 h-3"></i>
+                                {{ c.status }}
+                            </span>
+                            {% elif c.status_type == 'success' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                <i data-lucide="check-circle" class="w-3 h-3"></i>
+                                {{ c.status }}
+                            </span>
+                            {% else %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                                <i data-lucide="info" class="w-3 h-3"></i>
+                                {{ c.status }}
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Título del Contrato -->
+                        <h3 class="text-base font-bold text-slate-900 leading-snug">
+                            {{ c.title }}
+                        </h3>
+
+                        {% if c.source_report_code %}
+                        <div class="pt-1">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-300">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-amber-600"></i>
+                                Obra Fiscalizada por Denuncia Comunitaria (Radicado: {{ c.source_report_code }})
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        <!-- Entidad y Contratista -->
+                        <div class="text-xs text-slate-600 space-y-1 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400">Entidad:</span>
+                                <span class="font-medium text-slate-800 text-right">{{ c.entity }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400">Contratista:</span>
+                                <span class="font-semibold text-blue-900 text-right">{{ c.contractor }}</span>
+                            </div>
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-200">
+                                <span class="text-slate-400">Monto Asignado:</span>
+                                <span class="font-mono font-bold text-emerald-700 text-sm">
+                                    {% if c.amount.startswith('.') %}
+                                        $450{{ c.amount }}
+                                    {% elif not c.amount.startswith('$') and not 'auditor' in c.amount.lower() %}
+                                        ${{ c.amount }}
+                                    {% else %}
+                                        {{ c.amount }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Barras Comparativas de Avance Físico vs Financiero -->
+                        <div class="space-y-2 pt-1">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-slate-600 flex items-center gap-1">
+                                        <i data-lucide="hammer" class="w-3 h-3 text-blue-600"></i> Avance Físico (Obra Real)
+                                    </span>
+                                    <span class="text-blue-900 font-mono">{{ c.progress_physical }}%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
+                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ c.progress_physical }}%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-slate-600 flex items-center gap-1">
+                                        <i data-lucide="banknote" class="w-3 h-3 text-amber-600"></i> Ejecución Financiera (Pagado)
+                                    </span>
+                                    <span class="text-amber-800 font-mono">{{ c.progress_financial }}%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
+                                    <div class="bg-amber-500 h-2.5 rounded-full" style="width: {{ c.progress_financial }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resumen Técnico -->
+                        <p class="text-xs text-slate-600 line-clamp-2 italic pt-1">
+                            «{{ c.summary }}»
+                        </p>
+                    </div>
+
+                    <!-- Botones de Acción de Tarjeta -->
+                    <div class="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <button data-view-contract="{{ c.id }}" class="text-xs font-bold text-blue-900 hover:text-blue-700 flex items-center gap-1 py-1.5 px-2.5 rounded-lg hover:bg-blue-50 transition-colors">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                            <span>Ver Ficha Técnica</span>
+                        </button>
+
+                        <div class="flex items-center gap-1.5">
+                            {% if c.file_path %}
+                            <a href="/uploads/{{ c.file_path }}" target="_blank" class="text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-sm transition-colors" title="Descargar contrato subido por la administración">
+                                <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-400"></i>
+                                <span>Ver Contrato (PDF)</span>
+                            </a>
+                            {% endif %}
+                            
+                            {% if c.external_link %}
+                            <a href="{{ c.external_link }}" target="_blank" class="text-xs font-semibold text-slate-600 hover:text-slate-900 p-1.5 rounded hover:bg-slate-100" title="Ver en SECOP">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Estado sin resultados -->
+            <div id="contracts-no-results" class="hidden bg-white p-12 text-center rounded-2xl border border-slate-200">
+                <i data-lucide="search-x" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
+                <h3 class="text-base font-bold text-slate-700">No se encontraron contratos con estos filtros</h3>
+                <p class="text-xs text-slate-500 mt-1">Prueba cambiando la palabra clave o seleccionando "Todos los Sectores".</p>
+            </div>
+
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- CATÁLOGO 3: BLINDAJE LEGAL COMPLETO CONTRA DEMANDAS -->
+        <!-- ============================================================== -->
+        <section id="catalogo-blindaje" class="catalog-content space-y-8">
+            
+            <!-- Banner de Advertencia y Blindaje Institucional -->
+            <div class="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-950 text-white rounded-2xl p-6 sm:p-8 border border-amber-500/30 shadow-xl space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-400 text-slate-950">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                    Blindaje Jurídico Permanente
+                </div>
+                <h2 class="text-xl sm:text-3xl font-black text-white leading-tight">
+                    Compendio Legal y Jurisprudencial que <span class="text-amber-400">Protege a los Veedores contra Demandas y Acoso Judicial</span>
+                </h2>
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-4xl">
+                    En Colombia, ningún alcalde, secretario de despacho, interventor o contratista puede demandar con éxito a un veedor ciudadano que ejerza la vigilancia del erario público con apego a las pruebas documentales. Este catálogo reúne la doctrina constitucional, los artículos de ley estatutaria y las sentencias hito que otorgan <strong class="text-white font-semibold">inmunidad cívica frente a acusaciones infundadas de calumnia, injuria o censura previa</strong>.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-3">
+                    <button data-open-template="derecho-peticion" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center gap-1.5 shadow">
+                        <i data-lucide="file-text" class="w-4 h-4 text-amber-300"></i>
+                        Modelo de Derecho de Petición
+                    </button>
+                    <button data-open-template="alerta-temprana" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 border border-slate-700">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
+                        Formato Alerta Temprana
+                    </button>
+                    <button data-open-template="respuesta-blindaje" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1.5">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        Minuta de Respuesta a Amenazas de Demanda
+                    </button>
+                </div>
+            </div>
+
+            <!-- CUADRÍCULA DE PILARES JURÍDICOS DE DEFENSA -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- 1. LA CONSTITUCIÓN POLÍTICA -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-blue-50 rounded-xl text-blue-900">
+                            <i data-lucide="landmark" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Norma de Normas</span>
+                            <h3 class="text-lg font-bold text-slate-900">1. Constitución Política de Colombia</h3>
+                        </div>
+                    </div>
+                    <ul class="text-xs text-slate-600 space-y-3 leading-relaxed">
+                        <li class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <strong class="text-slate-900 block font-semibold mb-1">Artículo 20 (Libertad de Expresión e Información Veraz):</strong>
+                            Garantiza a toda persona la libertad de informar y emitir opiniones sobre asuntos públicos. Expresa tajantemente: <em>«No habrá censura»</em>.
+                        </li>
+                        <li class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <strong class="text-slate-900 block font-semibold mb-1">Artículo 74 (Acceso a Documentos Públicos):</strong>
+                            Todos los contratos, balances y actas oficiales son públicos. Cualquier negativa de un funcionario a entregar copias viola un derecho fundamental directo.
+                        </li>
+                        <li class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <strong class="text-slate-900 block font-semibold mb-1">Artículo 270 (Mandato de Control Ciudadano):</strong>
+                            Obliga al Estado a respaldar a la ciudadanía organizada para vigilar la gestión administrativa en todos sus niveles.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 2. JURISPRUDENCIA DE LA CORTE CONSTITUCIONAL -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-amber-50 rounded-xl text-amber-700">
+                            <i data-lucide="gavel" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-blue-900 uppercase tracking-wider">Jurisprudencia Vinculante</span>
+                            <h3 class="text-lg font-bold text-slate-900">2. Blindaje ante la Corte Constitucional</h3>
+                        </div>
+                    </div>
+                    <ul class="text-xs text-slate-600 space-y-3 leading-relaxed">
+                        <li class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <strong class="text-slate-900 block font-semibold mb-1">Sentencia C-292 de 2003 (Mayor Umbral de Tolerancia):</strong>
+                            La Corte estableció que los funcionarios y contratistas del erario deben tolerar un grado mucho mayor de crítica y escrutinio ciudadano, sin pretender usar la justicia penal como escudo.
+                        </li>
+                        <li class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <strong class="text-slate-900 block font-semibold mb-1">Sentencia T-263 de 2010 (Prohibición de Acoso Judicial - SLAPP):</strong>
+                            Condena el uso abusivo de denuncias penales por injuria o calumnia dirigidas a amedrentar a líderes cívicos. Prohíbe criminalizar el control social.
+                        </li>
+                        <li class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <strong class="text-slate-900 block font-semibold mb-1">Sentencia T-063 de 2017 (Ausencia de Calumnia de Buena Fe):</strong>
+                            Para que exista delito debe probarse que el veedor mintió a sabiendas con dolo de dañar. Trasladar dudas razonables o fallas visibles sobre una obra no es delito.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 3. LEY 850 DE 2003 (ESTATUTO DE VEEDURÍAS) -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-emerald-50 rounded-xl text-emerald-700">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">Estatuto Legal Especial</span>
+                            <h3 class="text-lg font-bold text-slate-900">3. Facultades Clave de la Ley 850 de 2003</h3>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-600 space-y-2.5">
+                        <p class="leading-relaxed">
+                            <strong>Artículo 15 (Derechos del Veedor):</strong> Derecho prioritario a solicitar documentos, participar en audiencias de adjudicación, requerir interventorías y elevar quejas formales ante Personería, Contraloría y Fiscalía General de la Nación.
+                        </p>
+                        <p class="leading-relaxed">
+                            <strong>Artículo 16 (Deber de Rigor):</strong> La veeduría formula denuncias sustentadas con pruebas, fotografías o datos del SECOP, lo que elimina cualquier imputación de temeridad.
+                        </p>
+                        <p class="leading-relaxed">
+                            <strong>Artículo 21 (Deber de Colaboración de las Entidades):</strong> Toda autoridad municipal está obligada por ley a brindar oportunamente la documentación solicitada por la Veeduría.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 4. LEY 1712 DE 2014 Y LEY 2195 DE 2022 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-purple-50 rounded-xl text-purple-700">
+                            <i data-lucide="lock-keyhole-open" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-purple-800 uppercase tracking-wider">Anticorrupción y Publicidad</span>
+                            <h3 class="text-lg font-bold text-slate-900">4. Máxima Publicidad y Protección al Denunciante</h3>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-600 space-y-2.5">
+                        <p class="leading-relaxed">
+                            <strong>Ley 1712 de 2014 (Máxima Publicidad):</strong> Se presume que toda información en posesión de la Alcaldía de Cicuco es pública. La reserva es excepcionalísima y debe ser justificada por escrito.
+                        </p>
+                        <p class="leading-relaxed">
+                            <strong>Ley 2195 de 2022 (Protección al Denunciante):</strong> Establece medidas de salvaguarda y no retaliación frente a actos de intimidación a veedores y ciudadanos que denuncian desvío de dineros estatales.
+                        </p>
+                        <p class="leading-relaxed">
+                            <strong>Ley 1755 de 2015 (Derecho de Petición):</strong> Plazo perentorio de 10 a 15 días hábiles para respuesta; el desacato genera sanciones de destitución disciplinaria.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- DECÁLOGO PRÁCTICO: CÓMO ACTUAR PARA ESTAR 100% BLINDADO -->
+            <div class="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 space-y-4 border border-slate-800">
+                <div class="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
+                    <i data-lucide="check-square" class="w-4 h-4"></i>
+                    Protocolo de Actuación y Blindaje Técnico
+                </div>
+                <h3 class="text-xl font-bold">Decálogo del Veedor Protegido contra Litigios</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs text-slate-300">
+                    <div class="flex items-start gap-2.5">
+                        <span class="bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] shrink-0">1</span>
+                        <span><strong>Citar siempre fuentes oficiales:</strong> Alerte usando los números de contrato, pliegos del SECOP II y bitácoras de interventoría.</span>
+                    </div>
+                    <div class="flex items-start gap-2.5">
+                        <span class="bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] shrink-0">2</span>
+                        <span><strong>Usar lenguaje técnico y condicional:</strong> Exprese "presunto desfase de cronograma" o "aparente deterioro prematuro" en vez de acusaciones categóricas personales.</span>
+                    </div>
+                    <div class="flex items-start gap-2.5">
+                        <span class="bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] shrink-0">3</span>
+                        <span><strong>Canalizar las alertas ante entes de control:</strong> Remita copias simultáneas a la Personería Municipal y Procuraduría Provincial.</span>
+                    </div>
+                    <div class="flex items-start gap-2.5">
+                        <span class="bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] shrink-0">4</span>
+                        <span><strong>Custodia de evidencia:</strong> Guarde fotografías con fecha, geolocalización y testimonios de la comunidad afectada.</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- CATÁLOGO 4: CONTACTO, DENUNCIAS Y REPORTES DEL MUNICIPIO -->
+        <!-- ============================================================== -->
+        <section id="catalogo-denuncias" class="catalog-content space-y-8">
+            
+            <!-- Banner Superior de Contacto Oficial -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4">
+                <div class="space-y-1">
+                    <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-900">
+                        Ventanilla Única Ciudadana
+                    </span>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">
+                        Reportes y Denuncias de Hechos en el Municipio de Cicuco
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-600">
+                        Canal institucional y confidencial para que cualquier vecino radique alertas sobre obras abandonadas, mala calidad de materiales, raciones del PAE incompletas o fallas en servicios públicos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FORMULARIO DE RADICACIÓN DIRECTA -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Columna Izquierda: Formulario (2 columnas en desktop) -->
+                <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+                    <div class="border-b border-slate-100 pb-4 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="edit-3" class="w-5 h-5 text-blue-900"></i>
+                                <span>Formulario Oficial de Radicación de Reporte Ciudadano</span>
+                            </h3>
+                        </div>
+                        <p class="text-xs text-slate-500">Se genera un código de radicado único oficial y se envía la notificación a nuestro correo institucional de veeduría.</p>
+                        
+                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-amber-950">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="mail-check" class="w-4 h-4 text-amber-700 shrink-0"></i>
+                                <span>Al radicar, el reporte se envía a: <strong class="font-mono text-blue-900 font-bold">{{ contact_email }}</strong></span>
+                            </div>
+                            <button type="button" onclick="copyOfficialEmail()" class="text-[11px] font-bold text-amber-800 hover:text-amber-950 bg-white px-2.5 py-1 rounded border border-amber-300 shrink-0 shadow-sm">
+                                Copiar Correo
+                            </button>
+                        </div>
+                    </div>
+
+                    <form id="citizen-report-form" class="space-y-4">
+                        
+                        <!-- Categoría y Asunto -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Categoría del Hecho *</label>
+                                <select name="category" required class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white">
+                                    <option value="Calidad de Obra / Pavimentación">Calidad de Obra / Pavimentación</option>
+                                    <option value="Abandono o Retraso de Proyecto">Abandono o Retraso de Proyecto</option>
+                                    <option value="Alimentación Escolar (PAE)">Alimentación Escolar (PAE)</option>
+                                    <option value="Acueducto y Alcantarillado">Acueducto y Alcantarillado</option>
+                                    <option value="Servicio de Salud / Hospital">Servicio de Salud / Hospital</option>
+                                    <option value="Presunto Detrimento o Sobrecosto">Presunto Detrimento o Sobrecosto</option>
+                                    <option value="Otro Asunto Comunitario">Otro Asunto Comunitario</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Ubicación del Hecho en Cicuco *</label>
+                                <input type="text" name="location" required placeholder="Ej: Barrio San José, Vía Principal, I.E. Técnica..." class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <!-- Asunto Breve -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Título o Asunto del Reporte *</label>
+                            <input type="text" name="subject" required placeholder="Ej: Agrietamiento en vía recién construida / Falta de raciones PAE" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white">
+                        </div>
+
+                        <!-- Narración de Hechos -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Descripción Detallada de los Hechos *</label>
+                            <textarea name="description" rows="4" required placeholder="Describe con la mayor claridad posible lo sucedido, fechas aproximadas, personal o maquinaria observada y afectación a los habitantes..." class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white"></textarea>
+                        </div>
+
+                        <!-- Adjuntar Evidencia -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Adjuntar Fotografía o Prueba Documental (Opcional)</label>
+                            <input type="file" name="evidence_file" accept=".jpg,.jpeg,.png,.pdf,.docx" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-900 hover:file:bg-blue-100 cursor-pointer">
+                            <span class="text-[11px] text-slate-400 block mt-1">Formatos permitidos: JPG, PNG, PDF (Máx. 25 MB).</span>
+                        </div>
+
+                        <!-- Opción de Anonimato y Confidencialidad -->
+                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
+                            <label class="flex items-start gap-2.5 cursor-pointer">
+                                <input type="checkbox" id="is-anonymous-checkbox" name="is_anonymous" value="true" class="mt-0.5 rounded text-amber-600 focus:ring-amber-500 w-4 h-4">
+                                <span class="text-xs text-slate-800">
+                                    <strong class="font-bold text-amber-900">Radicar como Denuncia 100% Anónima y Confidencial.</strong>
+                                    <span class="block text-slate-600 mt-0.5">Amparada en la Ley 1712 de 2014 y Ley 2195 de 2022. No se guardará tu nombre ni correo.</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Datos Personales (Deshabilitados si es anónimo) -->
+                        <div id="personal-info-fields" class="grid grid-cols-1 sm:grid-cols-3 gap-3 transition-opacity">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre Completo</label>
+                                <input type="text" name="citizen_name" placeholder="Tu nombre" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Correo de Contacto</label>
+                                <input type="email" name="citizen_email" placeholder="ejemplo@correo.com" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Teléfono / WhatsApp</label>
+                                <input type="tel" name="citizen_phone" placeholder="300 123 4567" class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <!-- Botón de Envío -->
+                        <div class="pt-2">
+                            <button type="submit" class="w-full py-3 px-4 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-amber-400"></i>
+                                <span>Radicar Reporte Oficialmente</span>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- Columna Derecha: Canales y Rastreador Directo -->
+                <div class="space-y-6">
+                    
+                    <!-- Tarjeta de Rastreo Inmediato -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 text-blue-900 font-bold text-sm">
+                            <i data-lucide="search" class="w-4 h-4 text-amber-500"></i>
+                            <span>Rastrear Estado de Radicado</span>
+                        </div>
+                        <p class="text-xs text-slate-600">Si ya radicaste un reporte anteriormente, consulta el estado de inspección aquí con tu código.</p>
+                        
+                        <div class="space-y-2">
+                            <input type="text" id="quick-track-code" placeholder="Ej: RAD-2026-0184" class="w-full uppercase font-mono text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                            <button type="button" onclick="quickLookup()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                <span>Consultar en Línea</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Garantías Legales de Protección al Denunciante -->
+                    <div class="bg-amber-50/80 rounded-2xl border border-amber-200 p-6 space-y-3">
+                        <div class="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wide">
+                            <i data-lucide="shield" class="w-4 h-4 text-amber-600"></i>
+                            <span>Garantía de Protección Legal</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed">
+                            Conforme a la <strong>Ley 2195 de 2022</strong>, toda persona que denuncie de buena fe hechos de corrupción u anomalías en la contratación pública está cobijada por el principio de reserva y protección contra represalias o despidos arbitrarios.
+                        </p>
+                    </div>
+
+                    <!-- Enlaces Directos a Órganos de Control Nacional -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
+                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wide">Órganos de Control Competentes</h4>
+                        <ul class="text-xs space-y-2 text-slate-600">
+                            <li>
+                                <a href="https://www.procuraduria.gov.co" target="_blank" class="hover:text-blue-900 flex items-center justify-between group">
+                                    <span>Procuraduría General de la Nación</span>
+                                    <i data-lucide="external-link" class="w-3 h-3 text-slate-400 group-hover:text-blue-900"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.contraloria.gov.co" target="_blank" class="hover:text-blue-900 flex items-center justify-between group">
+                                    <span>Contraloría General de la República</span>
+                                    <i data-lucide="external-link" class="w-3 h-3 text-slate-400 group-hover:text-blue-900"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.fiscalia.gov.co" target="_blank" class="hover:text-blue-900 flex items-center justify-between group">
+                                    <span>Fiscalía General de la Nación</span>
+                                    <i data-lucide="external-link" class="w-3 h-3 text-slate-400 group-hover:text-blue-900"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA (FOOTER) INSTITUCIONAL -->
+    <footer class="bg-slate-950 text-slate-400 text-xs border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                
+                <!-- Columna 1: Identidad -->
+                <div class="space-y-3 md:col-span-1">
+                    <div class="flex items-center gap-2 text-white font-bold text-sm">
+                        <img src="/static/images/logo.png" alt="Logo" class="w-8 h-8 rounded-full bg-white/10 p-0.5">
+                        <span>Cicuco Transparente</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Organización comunitaria de fiscalización ciudadana en Cicuco, Bolívar. Ejercicio cívico bajo la Ley 850 de 2003 y la Constitución Política.
+                    </p>
+                </div>
+
+                <!-- Columna 2: Catálogos Rápidos -->
+                <div class="space-y-2">
+                    <h5 class="text-xs uppercase font-bold text-slate-200 tracking-wider">Catálogos</h5>
+                    <ul class="space-y-1.5">
+                        <li><a href="#catalogo-inicio" data-switch-catalog="catalogo-inicio" class="hover:text-amber-300">1. Inicio y Presentación</a></li>
+                        <li><a href="#catalogo-contratos" data-switch-catalog="catalogo-contratos" class="hover:text-amber-300">2. Catálogo de Contratos</a></li>
+                        <li><a href="#catalogo-blindaje" data-switch-catalog="catalogo-blindaje" class="hover:text-amber-300">3. Blindaje Legal contra Demandas</a></li>
+                        <li><a href="#catalogo-denuncias" data-switch-catalog="catalogo-denuncias" class="hover:text-amber-300">4. Denuncias y Contacto</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna 3: Normativa Protectora -->
+                <div class="space-y-2">
+                    <h5 class="text-xs uppercase font-bold text-slate-200 tracking-wider">Marco Jurídico</h5>
+                    <ul class="space-y-1.5 text-slate-400">
+                        <li>Ley 850 de 2003 (Estatuto Veedurías)</li>
+                        <li>Ley 1712 de 2014 (Transparencia)</li>
+                        <li>Ley 1755 de 2015 (Derecho de Petición)</li>
+                        <li>Sentencias C-292/03 y T-263/10</li>
+                    </ul>
+                </div>
+
+                <!-- Columna 4: Contacto Oficial y Acceso Discreto Admin -->
+                <div class="space-y-3">
+                    <h5 class="text-xs uppercase font-bold text-slate-200 tracking-wider">Atención Ciudadana</h5>
+                    <p class="text-xs">
+                        Correo de Denuncias:<br>
+                        <strong class="text-amber-300 font-mono">{{ contact_email }}</strong>
+                    </p>
+                    <p class="text-xs text-slate-400">
+                        Municipio de Cicuco, Bolívar - Colombia
+                    </p>
+
+                    <!-- ACCESO DISCRETO PARA EL ADMINISTRADOR (Candado no obvio) -->
+                    <div class="pt-2">
+                        <button id="btn-admin-secret-lock" class="text-[11px] text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1.5 group cursor-pointer" title="Gestión Interna Administrativa (Ctrl + Shift + A)">
+                            <i data-lucide="lock" class="w-3 h-3 text-slate-600 group-hover:text-amber-400 transition-colors"></i>
+                            <span class="underline decoration-dotted">Gestión Interna</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-slate-400">
+                <p>© 2026 Veeduría Ciudadana Cicuco Transparente. Plataforma de Acceso Público y Vigilancia Cívica.</p>
+                <p class="text-slate-400">Desarrollado en Python con base de datos local y almacenamiento de contratos.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 1: CONSULTA Y RASTREADOR DE RADICADOS -->
+    <!-- ============================================================== -->
+    <div id="filing-lookup-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="search" class="w-5 h-5 text-blue-900"></i>
+                    <h3 class="text-base font-bold text-slate-900">Rastrear Estado de Radicado</h3>
+                </div>
+                <button type="button" id="btn-close-lookup-modal" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="flex gap-2">
+                <input type="text" id="input-lookup-code" placeholder="Ingresa código (ej: RAD-2026-0184)" class="w-full uppercase font-mono text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                <button type="button" id="btn-search-radicado" class="px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold rounded-lg shrink-0 transition-colors cursor-pointer">
+                    Consultar Estado
+                </button>
+            </div>
+
+            <div id="lookup-error-msg" class="hidden p-3 bg-rose-50 text-rose-700 text-xs rounded-lg border border-rose-200"></div>
+
+            <div id="lookup-empty-state" class="text-center py-6 text-slate-400 text-xs">
+                Digita tu código de radicado oficial para consultar la actuación del comité veedor.
+            </div>
+
+            <div id="lookup-result-box" class="hidden space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                    <span class="font-mono font-bold text-blue-900 text-sm" id="res-code"></span>
+                    <span class="px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800" id="res-status"></span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-slate-600">
+                    <div><span class="text-slate-400 block text-[10px]">FECHA RADICACIÓN</span><span id="res-date" class="font-medium text-slate-800"></span></div>
+                    <div><span class="text-slate-400 block text-[10px]">CATEGORÍA</span><span id="res-category" class="font-medium text-slate-800"></span></div>
+                </div>
+                <div>
+                    <span class="text-slate-400 block text-[10px]">LUGAR DEL HECHO</span>
+                    <span id="res-location" class="font-semibold text-slate-800"></span>
+                </div>
+                <div>
+                    <span class="text-slate-400 block text-[10px]">ASUNTO / DENUNCIA</span>
+                    <span id="res-subject" class="font-semibold text-slate-900"></span>
+                </div>
+                <p id="res-desc" class="text-slate-600 italic bg-white p-2.5 rounded border border-slate-100"></p>
+                
+                <div class="pt-2 border-t border-slate-200">
+                    <span class="text-[10px] font-bold text-blue-900 uppercase">Actuación / Notas de la Veeduría:</span>
+                    <p id="res-notes" class="text-slate-800 font-medium mt-0.5"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 2: CONFIRMACIÓN DE RADICACIÓN Y ENVÍO POR CORREO -->
+    <!-- ============================================================== -->
+    <div id="report-success-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-emerald-500 text-center space-y-4">
+            <button type="button" onclick="closeReportSuccessModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-lg transition-colors" title="Cerrar ventana">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                <i data-lucide="check" class="w-8 h-8"></i>
+            </div>
+            
+            <h3 class="text-xl font-bold text-slate-900">¡Radicación Registrada Exitosamente!</h3>
+            <p class="text-xs text-slate-600">
+                Tu reporte ha sido ingresado al sistema de control social. Guarda este código oficial de seguimiento:
+            </p>
+
+            <div class="bg-slate-100 py-3 px-4 rounded-xl border border-slate-200">
+                <span class="text-xs text-slate-500 block uppercase font-medium">Código de Radicado Oficial</span>
+                <span id="modal-ticket-code" class="text-2xl font-mono font-black text-blue-950"></span>
+            </div>
+
+            <p class="text-[11px] text-slate-500 leading-relaxed">
+                Tu reporte ha sido ingresado al sistema de control social y preparado para remitirse a <strong class="text-blue-900 font-mono">{{ contact_email }}</strong>. El Administrador de la Veeduría podrá evaluar y <strong>aprobar esta publicación para que aparezca en el Catálogo de Obras Fiscalizadas</strong>.
+            </p>
+
+            <div class="pt-2 space-y-2">
+                <a id="btn-send-gmail-direct" href="#" target="_blank" class="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                    <span>Abrir en Gmail Web y Enviar Reporte</span>
+                </a>
+
+                <a id="btn-send-email-direct" href="#" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all">
+                    <i data-lucide="send" class="w-4 h-4 text-amber-400"></i>
+                    <span>Enviar por Outlook / App de Correo Local</span>
+                </a>
+                
+                <button type="button" onclick="closeReportSuccessModal()" class="w-full py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer">
+                    Cerrar y Regresar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 3: MODELOS Y MINUTAS JURÍDICAS -->
+    <!-- ============================================================== -->
+    <div id="template-legal-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-5 h-5 text-amber-500"></i>
+                    <h3 id="template-title" class="text-sm sm:text-base font-bold text-slate-900">Plantilla Jurídica</h3>
+                </div>
+                <button type="button" id="btn-close-template-modal" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <textarea id="template-text-content" readonly class="w-full flex-1 min-h-[300px] text-xs font-mono p-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none resize-none leading-relaxed text-slate-800"></textarea>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" id="btn-copy-template-text" class="px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 shadow cursor-pointer">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    <span>Copiar Texto Completo</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 4: DETALLE COMPLETO DE CONTRATO -->
+    <!-- ============================================================== -->
+    <div id="contract-detail-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-3">
+                <div>
+                    <span id="cmodal-code" class="px-2.5 py-0.5 rounded font-mono text-xs font-bold bg-blue-100 text-blue-900"></span>
+                    <span id="cmodal-sector" class="text-xs text-slate-500 ml-2"></span>
+                    <h3 id="cmodal-title" class="text-lg font-bold text-slate-900 mt-1"></h3>
+                </div>
+                <button type="button" id="btn-close-contract-modal" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg shrink-0">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div><span class="text-slate-400 block text-[10px]">CONTRATISTA</span><span id="cmodal-contractor" class="font-bold text-slate-800"></span></div>
+                <div><span class="text-slate-400 block text-[10px]">ENTIDAD CONTRATANTE</span><span id="cmodal-entity" class="font-medium text-slate-800"></span></div>
+                <div><span class="text-slate-400 block text-[10px]">VALOR ASIGNADO</span><span id="cmodal-amount" class="font-mono font-bold text-emerald-700 text-sm"></span></div>
+                <div><span class="text-slate-400 block text-[10px]">ÚLTIMA INSPECCIÓN</span><span id="cmodal-inspection" class="font-medium text-slate-800"></span></div>
+                <div class="col-span-2"><span class="text-slate-400 block text-[10px]">ESTADO OFICIAL</span><span id="cmodal-status" class="font-bold text-blue-900"></span></div>
+            </div>
+
+            <!-- Barras Comparativas -->
+            <div class="space-y-3 bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                        <span>Avance Físico de Obra</span>
+                        <span id="cmodal-phys" class="font-mono text-blue-900"></span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                        <div id="cmodal-phys-bar" class="bg-blue-600 h-3 rounded-full"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                        <span>Ejecución Financiera</span>
+                        <span id="cmodal-fin" class="font-mono text-amber-700"></span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                        <div id="cmodal-fin-bar" class="bg-amber-500 h-3 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold text-slate-700 mb-1">Resumen Técnico de la Veeduría:</h4>
+                <p id="cmodal-summary" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100"></p>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+                <a id="cmodal-doc-btn" href="#" target="_blank" class="hidden px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold rounded-lg shadow flex items-center gap-1.5">
+                    <i data-lucide="download" class="w-3.5 h-3.5 text-amber-300"></i>
+                    <span>Descargar Documento / Contrato</span>
+                </a>
+                <a id="cmodal-secop-btn" href="#" target="_blank" class="hidden px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-lg flex items-center gap-1.5">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    <span>Ver en SECOP</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL 5: LOGIN DISCRETO DE ADMINISTRADOR (OCULTO) -->
+    <!-- ============================================================== -->
+    <div id="admin-login-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                    <i data-lucide="shield" class="w-4 h-4 text-amber-500"></i>
+                    <span>Gestión Interna de Veeduría</span>
+                </div>
+                <button type="button" id="btn-close-admin-login" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-600">
+                Apartado exclusivo para los miembros del comité veedor autorizados para subir contratos y gestionar denuncias.
+            </p>
+
+            <form id="admin-login-form" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Contraseña de Administrador</label>
+                    <input type="password" id="admin-pass-input" placeholder="••••••••" required class="w-full text-sm px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:bg-white">
+                </div>
+
+                <div id="admin-login-error" class="hidden p-2 text-xs bg-rose-50 text-rose-700 rounded border border-rose-200"></div>
+
+                <button type="submit" class="w-full py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs rounded-lg shadow transition-colors flex items-center justify-center gap-1.5">
+                    <i data-lucide="key" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span>Entrar al Panel de Control</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST FLOTANTE -->
+    <div id="global-toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl border border-amber-400/40 hidden animate-fade-in"></div>
+
+    <!-- Scripts de la Aplicación -->
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Inicializar iconos lucide
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
